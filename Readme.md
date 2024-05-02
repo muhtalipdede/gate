@@ -46,15 +46,26 @@ cargo run
 
 ```bash
 cd service1
-npm start
+npm start 8081
+npm start 8082
+http://localhost:8081/health
+http://localhost:8082/health
 ```
 
 ```bash
 cd service2
-npm start
+npm start 8083
+npm start 8084
+http://localhost:8083/health
+http://localhost:8084/health
 ```
 
 3. Tarayıcıdan `http://localhost:8080` adresine giderek uygulamayı kullanabilirsiniz.
+
+```bash
+http://localhost:8080/service1/health
+http://localhost:8080/service2/health
+```
 
 ## Yük Testi
 
