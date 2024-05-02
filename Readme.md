@@ -4,7 +4,7 @@ Bu uygulama, Rust programlama dili ile yazılmış bir API Gateway uygulamasıd�
 
 ## Servisler
 
-Uygulama, iki adet servis içerir. Bu servisler, `service1` ve `service2` olarak adlandırılmıştır. Her iki servis de Node.js ile yazılmıştır ve `service1` 8081 portunda, `service2` ise 8082 portunda çalışır.
+Uygulama, iki adet servis içerir. Bu servisler, `service1` ve `service2` olarak adlandırılmıştır. Her iki servis de Node.js ile yazılmıştır ve `service1` 8081 ve 8082 portunda, `service2` ise 8083 ve 8084 portunda çalışır.
 [service1](./service1)
 [service2](./service2)
 
