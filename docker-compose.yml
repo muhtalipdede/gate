@@ -1,0 +1,88 @@
+version: '3'
+
+services:
+  api_gateway:
+    build:
+      context: ./rust-gate
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - sidecar01
+      - sidecar02
+      - sidecar03
+      - sidecar04
+
+  sidecar01:
+    build:
+      context: ./rust-side-proxy
+      dockerfile: Dockerfile
+    command: ["rust-side-proxy", "9091", "8081"]
+    ports:
+      - "9091:9091"
+    depends_on:
+      - service01
+
+  sidecar02:
+    build:
+      context: ./rust-side-proxy
+      dockerfile: Dockerfile
+    command: ["rust-side-proxy", "9092", "8082"]
+    ports:
+      - "9092:9092"
+    depends_on:
+      - service02
+
+  sidecar03:
+    build:
+      context: ./rust-side-proxy
+      dockerfile: Dockerfile
+    command: ["rust-side-proxy", "9093", "8083"]
+    ports:
+      - "9093:9093"
+    depends_on:
+      - service03
+
+  sidecar04:
+    build:
+      context: ./rust-side-proxy
+      dockerfile: Dockerfile
+    command: ["rust-side-proxy", "9094", "8084"]
+    ports:
+      - "9094:9094"
+    depends_on:
+      - service04
+    environment:
+      - SERVICE_PORT=8084
+
+  service01:
+    build:
+      context: ./service1
+      dockerfile: Dockerfile
+    command: ["node", "index.js", "8081"]
+    ports:
+      - "8081:8081"
+
+  service02:
+    build:
+      context: ./service1
+      dockerfile: Dockerfile
+    command: ["node", "index.js", "8082"]
+    ports:
+      - "8082:8082"
+
+  service03:
+    build:
+      context: ./service2
+      dockerfile: Dockerfile
+    command: ["node", "index.js", "8083"]
+    ports:
+      - "8083:8083"
+
+  service04:
+    build:
+      context: ./service2
+      dockerfile: Dockerfile
+    command: ["node", "index.js", "8084"]
+    ports:
+      - "8084:8084"

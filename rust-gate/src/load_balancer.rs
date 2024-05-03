@@ -1,9 +1,9 @@
 use std::sync::{Arc, RwLock};
 use actix_web::{web, HttpResponse};
 use reqwest;
+use uuid::Uuid;
 use crate::service::Service;
 use crate::cache::Cache;
-
 
 pub struct LoadBalancer {
     services: Arc<RwLock<Vec<Service>>>,
@@ -57,7 +57,18 @@ pub fn handle_request(
     let endpoint = requested_service.endpoints[load_balancer_guard.current_index].clone();
     load_balancer_guard.current_index = (load_balancer_guard.current_index + 1) % requested_service.endpoints.len();
 
+    println!("Forwarding request to {}/{}", endpoint, endpoint_name);
+
+    let correlation_id = Uuid::new_v4().to_string();
     let client = reqwest::blocking::Client::new();
+
+    client
+        .get(&format!("{}/{}", endpoint, endpoint_name))
+        .header("origin", "http://host.docker.internal:8080")
+        .header("correlation-id", correlation_id)
+        .send()
+        .unwrap();
+
     let response = client.get(&format!("{}/{}", endpoint, endpoint_name)).send();
 
     match response {

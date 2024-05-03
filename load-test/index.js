@@ -9,7 +9,7 @@ export const options = {
 
 export default function() {
     http.get('http://localhost:8080/service1/health');
-    // http.get('http://localhost:8080/service2/health');
+    http.get('http://localhost:8080/service2/health');
 
     sleep(1);
 }
