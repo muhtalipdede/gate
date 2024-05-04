@@ -1,4 +1,5 @@
-#[derive(Clone)]
+use serde::{Serialize, Deserialize};
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Service {
     pub name: String,
     pub endpoints: Vec<String>,

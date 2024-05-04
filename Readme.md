@@ -2,6 +2,8 @@
 
 Bu uygulama, Rust programlama dili ile yazılmış bir API Gateway uygulamasıdır. Uygulama, gelen istekleri belirli bir sıra ile işleyerek, arka tarafta bulunan servisler ile iletişim kurar ve sonuçları istemciye döner. Uygulama, aynı zamanda Round Robin Load Balancing, Caching gibi özellikleri de destekler. 
 
+![Application](./images/application.png)
+
 ## Servisler
 
 Uygulama, iki adet servis içerir. Bu servisler, `service1` ve `service2` olarak adlandırılmıştır. Her iki servis de Node.js ile yazılmıştır ve `service1` 8081 ve 8082 portunda, `service2` ise 8083 ve 8084 portunda çalışır.
@@ -90,12 +92,22 @@ Uygulamayı Docker Compose ile çalıştırmak için aşağıdaki komutları ça
 
 ```bash
 ## replace localhost => host.docker.internal and run
-docker-compose up
+docker compose up
+
+## check the services
+docker ps
+
+## destroy the services
+docker compose down
 ```
 
 ## Yük Testi
 
 Uygulamanın yük testini yapmak için `k6` aracını kullanabilirsiniz. Aşağıdaki komutu çalıştırarak 1000 istek gönderebilirsiniz.
+
+![1000 Virtual Users 60s](./images/1000vus_60s.png)
+![5000 Virtual Users 60s](./images/5000vus_60s.png)
+![10000 Virtual Users 60s](./images/10000vus_60s.png)
 
 ```bash
 cd load-test

@@ -13,6 +13,8 @@ RUN cargo install --path .
 
 FROM ubuntu:latest
 COPY --from=builder /usr/local/cargo/bin/rust-gate /usr/local/bin/rust-gate
+COPY ./services.json /usr/local/bin/services.json
+
 
 ENV DOCKER_ENV=true
 

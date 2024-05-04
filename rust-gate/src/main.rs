@@ -6,46 +6,16 @@ use actix_web::{web, App, HttpRequest, HttpServer};
 use std::sync::{Arc, RwLock};
 use load_balancer::{LoadBalancer, handle_request};
 use service::Service;
+use std::fs;
+use std::env;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    // let service1 = Service {
-    //     name: "service1".to_string(),
-    //     endpoints: vec!["http://host.docker.internal:8081".to_string(), "http://host.docker.internal:8082".to_string()],
-    //     enable_cache: true,
-    //     cache_endpoints: vec!["health".to_string()],
-    //     cache_duration: 10,
-    // };
-
-    // let service2 = Service {
-    //     name: "service2".to_string(),
-    //     endpoints: vec!["http://host.docker.internal:8083".to_string(), "http://host.docker.internal:8084".to_string()],
-    //     enable_cache: true,
-    //     cache_endpoints: vec![],
-    //     cache_duration: 10,
-    // };
-
-    // with sidecar proxy
-    let service1 = Service {
-        name: "service1".to_string(),
-        endpoints: vec!["http://host.docker.internal:9091".to_string(), "http://host.docker.internal:9092".to_string()],
-        enable_cache: false,
-        cache_endpoints: vec!["health".to_string()],
-        cache_duration: 10,
-    };
-
-    let service2 = Service {
-        name: "service2".to_string(),
-        endpoints: vec!["http://host.docker.internal:9083".to_string(), "http://host.docker.internal:9094".to_string()],
-        enable_cache: false,
-        cache_endpoints: vec![],
-        cache_duration: 10,
-    };
-
-    let load_balancer = Arc::new(RwLock::new(LoadBalancer::new(vec![service1, service2])));
+    let services = create_services();
+    let load_balancer = Arc::new(RwLock::new(LoadBalancer::new(services)));
     let cache: Arc<RwLock<cache::Cache<String, String>>> = Arc::new(RwLock::new(cache::Cache::new()));
 
-    println!("Server running at http://host.docker.internal:8080");
+    println!("Server running at http://localhost:8080");
 
     HttpServer::new(move || {
         let load_balancer = load_balancer.clone();
@@ -59,4 +29,17 @@ async fn main() -> std::io::Result<()> {
     .bind(("0.0.0.0", 8080))?
     .run()
     .await
+}
+
+fn create_services() -> Vec<Service> {
+    match env::var("DOCKER_ENV") {
+        Ok(_) => {
+            let services = fs::read_to_string("/usr/local/bin/services.json").expect("Unable to read services.json");
+            serde_json::from_str(&services).expect("Unable to parse services.json")
+        },
+        Err(_) => {
+            let services = fs::read_to_string("services.json").expect("Unable to read services.json");
+            serde_json::from_str(&services).expect("Unable to parse services.json")
+        }
+    }
 }
